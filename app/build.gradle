@@ -1,15 +1,16 @@
 plugins {
     id 'com.android.application'
+    id 'com.google.gms.google-services'
 }
 
 android {
-    compileSdkVersion 29
-    buildToolsVersion "30.0.2"
+    namespace 'com.best.movie.note'
+    compileSdkVersion 34
 
     defaultConfig {
         applicationId "com.best.movie.note"
         minSdkVersion 23
-        targetSdkVersion 29
+        targetSdkVersion 34
         versionCode 1
         versionName "1.0"
     }
@@ -20,10 +21,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
+
     buildFeatures {
         dataBinding true
     }
@@ -40,7 +43,6 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
-    implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.navigation:navigation-fragment:2.3.1'
     implementation 'androidx.navigation:navigation-ui:2.3.1'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
@@ -48,31 +50,45 @@ dependencies {
     // Glide
     implementation "com.github.bumptech.glide:glide:$glide_version"
     annotationProcessor "com.github.bumptech.glide:compiler:$glide_version"
+
     // Retrofit
     implementation "com.squareup.retrofit2:retrofit:$retrofit2_version"
     implementation "com.squareup.retrofit2:converter-gson:$retrofit2_version"
+
     // JavaRx
     implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
     implementation 'io.reactivex.rxjava2:rxjava:2.2.5'
     implementation 'com.jakewharton.retrofit:retrofit2-rxjava2-adapter:1.0.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava:2.4.0'
-    // ViewModel
+
+    // ViewModel & LiveData
     implementation "androidx.lifecycle:lifecycle-viewmodel:$lifecycle_version"
-    // LifeCycle
     implementation "androidx.lifecycle:lifecycle-livedata:$lifecycle_version"
+
     // Paging Library
     implementation "androidx.paging:paging-runtime:$paging_version"
+
     // Dagger 2
     api 'com.google.dagger:dagger:2.29.1'
     annotationProcessor 'com.google.dagger:dagger-compiler:2.29.1'
-    // Import the Firebase BoM
+
+    // Firebase
     implementation platform('com.google.firebase:firebase-bom:25.12.0')
     implementation 'com.google.firebase:firebase-database'
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-storage'
-    // Play  Services
+
+    // Play Services
     implementation 'com.google.android.gms:play-services-auth:19.0.0'
 }
 
-apply plugin: 'com.android.application'
-apply plugin: 'com.google.gms.google-services'
+configurations.configureEach {
+    resolutionStrategy.eachDependency { DependencyResolveDetails details ->
+        def requested = details.requested
+        if (requested.group == 'org.jetbrains.kotlin') {
+            if (requested.name == 'kotlin-stdlib-jdk7' || requested.name == 'kotlin-stdlib-jdk8') {
+                details.useTarget "org.jetbrains.kotlin:kotlin-stdlib:1.8.10"
+            }
+        }
+    }
+}
